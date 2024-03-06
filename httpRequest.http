@@ -1,0 +1,2 @@
+POST http://localhost:8888/CUSTOMER-SERVICE/actuator/refresh
+Accept: application/json
