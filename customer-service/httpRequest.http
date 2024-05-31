@@ -1,0 +1,36 @@
+
+# ### Send request to get access token
+POST http://localhost:8080/realms/eday-realm/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id=eday-customer&username=yade&password=P@sser28
+###
+
+# ### send get custommers
+GET http://localhost:8082/customers
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJtNDItTlNPUHNFcVNDQWJLTjlINUhRcm9uaGpIWUoxME5yYno3bVlPMVdzIn0.eyJleHAiOjE3MTE4NjczMDIsImlhdCI6MTcxMTg2NzAwMiwianRpIjoiYmMxYzhmMzEtNTU1Mi00NjEzLWEwMmYtMzAxYzA4ODBiOTNjIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9lZGF5LXJlYWxtIiwic3ViIjoiOWRhMzM4YzItMmE2MS00ZTNmLThlNjQtNGQzYjQyODBlMTU3IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiZWRheS1jdXN0b21lciIsInNlc3Npb25fc3RhdGUiOiIyNDAwNzk4YS01OTc4LTQ5NjEtYmMwNy1lZGJmOTAwY2IwZDgiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbIi8qIl0sInNjb3BlIjoicHJvZmlsZSBtaWNyb3Byb2ZpbGUtand0IGVtYWlsIiwic2lkIjoiMjQwMDc5OGEtNTk3OC00OTYxLWJjMDctZWRiZjkwMGNiMGQ4IiwidXBuIjoieWFkZSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6Iklib3UgWUFERSIsInByZWZlcnJlZF91c2VybmFtZSI6InlhZGUiLCJnaXZlbl9uYW1lIjoiSWJvdSIsImZhbWlseV9uYW1lIjoiWUFERSIsImVtYWlsIjoieWFhZGlidUB5YWhvby5mciJ9.VubB7W2bdoSflqKnrtSM6kWG1XcVmEEYEoumUcWbevGowPzV8LEDV1hAwTSVLMW9_g32OFydIabOaPmz0blwCA_E2lj6qZvl-xSJiYKtMtj4ZBCZ0Pv_N3GjiZHh9tISzKFlK0rVeYtrFSzc7W1c3FnUKHDr_hKMucKwT5h--OV0_r4voCpxMhLQV_rFNeAxZWcrkr4SJ9jvqQkjTulOaT61fnpDHH5CD4olPuAAbEAAXBjwGxv7uNQw8UPAAPejg1OWVAt0x-7fQuhTUCayVJzZGyxdKtSTKJS26GAoMuBYwKzD7-Tk5aRL7n-dvsYTlBgeFw1Ar6YEQKwdDqQ7qg
+
+###
+
+# ### send get custommer detail
+GET http://localhost:8888/customer-service/customers/1
+
+###
+
+# ### send get accounts
+GET http://localhost:8888/account-service/accounts
+
+###
+
+# ### send get accounts detail
+GET http://localhost:8888/account-service/accounts/a5602c40-cc81-4183-bedf-0f950f2490ba
+
+###
+
+
+
+
+
+
+
+

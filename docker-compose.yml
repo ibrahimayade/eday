@@ -1,4 +1,61 @@
 services:
+  keycloak_pg:
+    image: postgres:15.6-alpine
+    container_name: keycloak_pg
+    user: postgres
+    environment:
+      POSTGRES_DB: keycloak_db
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak123
+
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    ports:
+      - '5436:5432'
+    expose:
+      - '5436'
+    volumes:
+      - pgdata:/Library/PostgreSQL/15/data
+
+    networks:
+      - eday-network
+
+  keycloak_app:
+    image: quay.io/keycloak/keycloak:23.0.7
+    command: -v start-dev --import-realm
+    restart: unless-stopped
+    container_name: keycloak_app
+    environment:
+      KC_DB: postgres
+      KC_DB_DATABASE: keycloak_db
+      KC_DB_SCHEMA: public
+      KC_DB_URL: jdbc:postgresql://keycloak_pg:5432/keycloak_db?useSSL=false
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak123
+      KC_LOG_LEVEL: info
+      KC_METRICS_ENABLED: true
+      KC_HEALTH_ENABLED: true
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+
+
+    depends_on:
+      keycloak_pg:
+        condition: service_healthy
+    ports:
+      - '8180:8080'
+    expose:
+      - '8180'
+    volumes:
+      - ./kc:/opt/keycloak/data/import
+#      - ./src/main/resources/realm-export.json:/opt/jboss/keycloak/imports/realm-export.json
+    networks:
+      - eday-network
+
   eday-discovery-service:
     build: ./discovery-service
     container_name: eday-discovery-service
@@ -8,8 +65,13 @@ services:
       - '8761'
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://eday-discovery-service:8761/actuator/health" ]
-      interval: 10s
-      retries: 4
+      interval: 25s
+      retries: 6
+    networks:
+      - eday-network
+
+
+
   eday-config-service:
     build: ./config-service
     container_name: eday-config-service
@@ -21,11 +83,14 @@ services:
       - DISCOVERY_SERVICE_URL=http://eday-discovery-service:8761/eureka
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://eday-config-service:9999/actuator/health" ]
-      interval: 10s
+      interval: 20s
       retries: 6
     depends_on:
       eday-discovery-service:
         condition: service_healthy
+    networks:
+      - eday-network
+
   eday-customer-service:
     build: ./customer-service
     container_name: eday-customer-service
@@ -38,11 +103,14 @@ services:
       - CONFIG_SERVICE_URL=http://eday-config-service:9999
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://eday-customer-service:8082/actuator/health" ]
-      interval: 10s
-      retries: 4
+      interval: 25s
+      retries: 7
     depends_on:
       eday-config-service:
         condition: service_healthy
+    networks:
+      - eday-network
+
   eday-account-service:
     build: ./account-service
     container_name: eday-account-service
@@ -55,11 +123,14 @@ services:
       - CONFIG_SERVICE_URL=http://eday-config-service:9999
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://eday-account-service:8081/actuator/health" ]
-      interval: 10s
-      retries: 4
+      interval: 25s
+      retries: 6
     depends_on:
       eday-customer-service:
         condition: service_healthy
+    networks:
+      - eday-network
+
   eday-gateway-service:
     build: ./gateway-service
     container_name: eday-gateway-service
@@ -70,6 +141,23 @@ services:
     environment:
       - DISCOVERY_SERVICE_URL=http://eday-discovery-service:8761/eureka
       - CONFIG_SERVICE_URL=http://eday-config-service:9999
+
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://eday-gateway-service:8081/actuator/health" ]
+      interval: 20s
+      retries: 5
     depends_on:
       eday-account-service:
         condition: service_healthy
+    networks:
+      - eday-network
+volumes:
+  pgdata:
+    driver: local
+
+
+networks:
+  eday-network:
+    driver: bridge
+
+

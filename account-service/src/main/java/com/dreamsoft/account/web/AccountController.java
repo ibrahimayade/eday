@@ -3,8 +3,11 @@ package com.dreamsoft.account.web;
 import com.dreamsoft.account.clients.CustomerRestClient;
 import com.dreamsoft.account.entites.Account;
 import com.dreamsoft.account.models.Customer;
+import com.dreamsoft.account.utils.ServletRequestUtil;
 import com.dreamsoft.account.repositories.AccountRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,10 +27,25 @@ public class AccountController {
         return  accountRepository.findAll();
     }
     @GetMapping("/{id}")
-    public Account getCustomerById(@PathVariable String id){
+    public Account getCustomerById(HttpServletRequest request, @PathVariable String id){
+
         Account account= accountRepository.findById(id).orElseThrow(null);
-        Customer customer=customerRestClient.findCustomerById(account.getCustomerId());
+        final HttpHeaders headers=ServletRequestUtil.getHeaders(request);
+        Customer customer=customerRestClient.findCustomerById(headers,account.getCustomerId());
         account.setCustomer(customer);
         return account;
     }
+
+
+    private HttpHeaders getHeaders(final HttpServletRequest httpServletRequest) {
+        var iterator = httpServletRequest.getHeaderNames().asIterator();
+        final HttpHeaders headers = new HttpHeaders();
+        while (iterator.hasNext()) {
+            var key = iterator.next();
+            headers.add(key, httpServletRequest.getHeader(key));
+        }
+        return headers;
+    }
+
+
 }
