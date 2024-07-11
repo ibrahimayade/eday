@@ -21,8 +21,8 @@ services:
       - DISCOVERY_SERVICE_URL=http://eday-discovery-service:8761/eureka
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://eday-config-service:9999/actuator/health" ]
-      interval: 10s
-      retries: 6
+      interval: 15s
+      retries: 8
     depends_on:
       eday-discovery-service:
         condition: service_healthy
@@ -38,10 +38,28 @@ services:
       - CONFIG_SERVICE_URL=http://eday-config-service:9999
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://eday-customer-service:8082/actuator/health" ]
-      interval: 10s
-      retries: 4
+      interval: 15s
+      retries: 6
     depends_on:
       eday-config-service:
+        condition: service_healthy
+
+  eday-kyc-service:
+    build: ./kyc-service
+    container_name: eday-kyc-service
+    ports:
+      - '8083:8083'
+    expose:
+      - '8083'
+    environment:
+      - DISCOVERY_SERVICE_URL=http://eday-discovery-service:8761/eureka
+      - CONFIG_SERVICE_URL=http://eday-config-service:9999
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://eday-kyc-service:8083/actuator/health" ]
+      interval: 15s
+      retries: 6
+    depends_on:
+      eday-customer-service:
         condition: service_healthy
   eday-account-service:
     build: ./account-service
@@ -55,10 +73,10 @@ services:
       - CONFIG_SERVICE_URL=http://eday-config-service:9999
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://eday-account-service:8081/actuator/health" ]
-      interval: 10s
-      retries: 4
+      interval: 15s
+      retries: 8
     depends_on:
-      eday-customer-service:
+      eday-kyc-service:
         condition: service_healthy
   eday-gateway-service:
     build: ./gateway-service
