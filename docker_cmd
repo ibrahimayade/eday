@@ -1,0 +1,64 @@
+###### docker commandes avec Dockerfile
+
+# lister les images creer
+docker images
+
+# permet de creer une image local a partir d'une autre image du docker hub avec l'option -d ça permet de le faire en mode deamon
+# Attention le .(point) sous enter qu'il existe un fichier Dockerfile dans la racine du projet
+docker build . -t image-name:tag
+ex: docker build . -t discovery-service:v1
+
+# Demmarer un conteneur a partir d'une image local (tag p etre la version par exemple)
+docker run image-name
+
+# permet de lister les conteneurs demarré
+docker ps
+
+# permet de lister les conteneur avec les status(up exited, created)
+docker ps -a
+
+### supprimer un container
+docker rm container_d
+
+### supprimer une image
+docker rmi image_id
+
+### commandes docker compose
+
+## demarrer 
+docker compose up
+
+## demarrer en  rebuildant les contenaires
+docker compose up --build -d
+## arreter 
+docker compose down
+
+#### supprimer les orphans
+docker compose down --remove-orphans
+#### supprimer tous les images et contnairs et autres non taggés
+docker system prune
+
+
+############ KEYCLOAK #######################################
+
+./kc.sh start --db keycloak --db-url-host localhost:5432 keycloak --db-username keycloak --db-password keycloak
+
+
+
+jdbc:postgresql://keycloakdb:5432/${POSTGRES_DB:-keycloak}?useSSL=false
+
+
+### yml to json online
+https://www.convertjson.com/yaml-to-json.htm 
+
+UPDATE mysql.user SET Password=P@sser28 WHERE User='root';
+
+
+SET PASSWORD FOR root@localhost =P@sser28
+
+ALTER USER 'root'@'localhost' IDENTIFIED BY P@sser28;
+
+
+CREATE USER 'yade'@'localhost' IDENTIFIED BY 'yade';
+GRANT ALL PRIVILEGES ON *.* TO 'yade'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
