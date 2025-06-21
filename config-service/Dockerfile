@@ -1,5 +1,5 @@
 FROM openjdk:17-oracle
-VOLUME /Users/utilisateur/Documents/projects/owner/eday-config-repos
+VOLUME C:/Users/IbrahimaYADE/git/eday-config-repos/eday-config-repos
 COPY target/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
 

@@ -23,6 +23,8 @@ public class AccountController {
     public List<Account> getAccounts(){
         return  accountRepository.findAll();
     }
+
+
     @GetMapping("/{id}")
     public Account getCustomerById(@PathVariable String id){
         Account account= accountRepository.findById(id).orElseThrow(null);
