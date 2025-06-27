@@ -4,6 +4,8 @@ pipeline {
   environment {
     IMAGE_PREFIX = 'localhost:5000' // Change-le si tu veux utiliser Docker Hub
     MAVEN_OPTS = '-Dmaven.test.skip=true'
+    GIT_CREDENTIALS_ID = 'git-credentials'  // ID des credentials Jenkins (voir ci-dessous)
+     BRANCH_NAME = 'devops-v0'                 // Branche cible
   }
 
   stages {
