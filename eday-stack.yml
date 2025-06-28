@@ -1,0 +1,64 @@
+version: "3.8"
+
+services:
+  discovery-service:
+    image: yadibrahim/discovery-service:1.0
+    ports:
+      - "8761:8761"
+    networks:
+      - eday-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  config-service:
+    image: yadibrahim/config-service:1.0
+    networks:
+      - eday-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  gateway-service:
+    image: yadibrahim/gateway-service:1.0
+    ports:
+      - "8080:8080"
+    networks:
+      - eday-net
+    depends_on:
+      - discovery-service
+      - config-service
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+
+  customer-service:
+    image: yadibrahim/customer-service:1.0
+    networks:
+      - eday-net
+    depends_on:
+      - discovery-service
+      - config-service
+    deploy:
+      replicas: 3   # Réplication mise à jour
+      restart_policy:
+        condition: on-failure
+
+  account-service:
+    image: yadibrahim/account-service:1.0
+    networks:
+      - eday-net
+    depends_on:
+      - discovery-service
+      - config-service
+    deploy:
+      replicas: 3   #  Réplication mise à jour
+      restart_policy:
+        condition: on-failure
+
+networks:
+  eday-net:
+    driver: overlay
