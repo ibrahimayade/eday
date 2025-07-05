@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: eday-gateway-service
+  namespace: eday
+spec:
+  selector:
+    app: eday-gateway-service
+  ports:
+    - protocol: TCP
+      port: 8881
+      targetPort: 8881
+      nodePort: 30081
+  type: NodePort

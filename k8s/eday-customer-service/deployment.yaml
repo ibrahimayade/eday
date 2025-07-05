@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eday-customer-service
+  namespace: eday
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: eday-customer-service
+  template:
+    metadata:
+      labels:
+        app: eday-customer-service
+    spec:
+      containers:
+        - name: customer
+          image: yadibrahim/eday-customer-service:latest
+          ports:
+            - containerPort: 8083
+          env:
+            - name: DISCOVERY_SERVICE_URL
+              value: "http://eday-discovery-service:8761/eureka"
+            - name: CONFIG_SERVICE_URL
+              value: "http://eday-config-service:9999"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8083
+            initialDelaySeconds: 15
+            periodSeconds: 10

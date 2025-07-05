@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eday-account-service
+  namespace: eday
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: eday-account-service
+  template:
+    metadata:
+      labels:
+        app: eday-account-service
+    spec:
+      containers:
+        - name: account
+          image: yadibrahim/eday-account-service:latest
+          ports:
+            - containerPort: 8082
+          env:
+            - name: DISCOVERY_SERVICE_URL
+              value: "http://eday-discovery-service:8761/eureka"
+            - name: CONFIG_SERVICE_URL
+              value: "http://eday-config-service:9999"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8082
+            initialDelaySeconds: 15
+            periodSeconds: 10
+
+
